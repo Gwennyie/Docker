@@ -21,13 +21,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-nsrkuc*nnsq$#g9jj-x7!8w(2=fv8e-iub%8!=ux9xb!ly_4n5'
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-local-development-only'
+)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['gwennyie.pythonanywhere.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = os.environ.get(
+    'DJANGO_ALLOWED_HOSTS',
+    'localhost,127.0.0.1,[::1],gwennyie.pythonanywhere.com'
+).split(',')
 
 
 # Application definition
@@ -49,10 +53,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.github',
 ]
 
-if "pythonanywhere" in socket.gethostname():
-    SITE_ID = 3 # production site (gwennyie.pythonanywhere.com)
-else:
-    SITE_ID = 2 # local site (127.0.0.1:8000)
+SITE_ID = int(os.environ.get('SITE_ID', '2'))
 
 AUTHENTICATION_BACKENDS = [
 'django.contrib.auth.backends.ModelBackend',
